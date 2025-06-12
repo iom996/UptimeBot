@@ -1,7 +1,8 @@
-from aiogram import Bot, Dispatcher,F, html
+from aiogram import Bot, Dispatcher,F
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-import asyncio, typing
+from aiogram.fsm.storage import redis
+import asyncio
 from os import getenv
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message
@@ -23,36 +24,30 @@ async def command_start_handler(message: Message) -> None:
 async def command(message: Message, state: FSMContext) -> None :
  await state.set_state(Form.web)
  await message.answer("What is your web for Uptime?")
- #buttons = [[KeyboardButton(text='Cancel input')]]
- #keyboard = ReplyKeyboardMarkup(keyboard=buttons)
- #await message.answer('ok', reply_markup=keyboard)
+
 
 @dp.message(Form.web)
-async def interval(message: Message, state: FSMContext) -> None:
+async def get_web(message: Message, state: FSMContext) -> None:
 
     await state.update_data(web=message.text)
     await state.set_state(Form.interval)
     await message.answer('Well, what interval?(minutes)')
 
 @dp.message(Form.interval)
-async def uptiming(message: Message, state: FSMContext) -> None:
-   data = await state.get_data()
+async def get_interval(message: Message, state: FSMContext) -> None:
    await state.update_data(interval=int(message.text))
+   data = await state.get_data()
+   web = data.get("web")
+   interval = message.text
+   text = f"{web}, {interval}"
+
+   await message.answer(text=text)
    await state.clear()
-   await show_summary(message = message, data=data)
 
-async def show_summary(message: Message, data: typing.Dict[str, typing.Any]) -> None:
+async def storage():
+   main = main
 
-    web = data["web"]
-
-    interval = data.get("interval", None)
-
-    text = f"{web}, {interval} "
-
-    await message.answer(text=text)
-
-
-
+@dp.message
 async def main() -> None:
   bot = Bot(token=TOKEN)
 
