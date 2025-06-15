@@ -44,9 +44,6 @@ async def get_interval(message: Message, state: FSMContext) -> None:
    await message.answer(text=text)
    await state.clear()
 
-async def storage():
-   main = main
-
 @dp.message
 async def main() -> None:
   bot = Bot(token=TOKEN)
