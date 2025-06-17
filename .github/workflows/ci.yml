@@ -21,4 +21,4 @@ jobs:
         run: echo "token=${{secrets.token}}" > .env
 
       - name: Run container
-        run: docker run iom996/uptimebot
+        run: docker run --rm --env-file .env iom996/uptimebot
