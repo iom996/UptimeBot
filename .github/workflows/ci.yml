@@ -7,6 +7,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      token: ${{ secrets.token }}
 
     steps:
       - uses: actions/checkout@v4
@@ -18,7 +20,8 @@ jobs:
         run: docker build -t iom996/uptimebot .
 
       - name: token
-        run: echo "token=${{secrets.token}}" > .env
+        run: echo "token=${secrets.token}" > .env
+             cat .env
 
       - name: Run Docker container and show logs
-        run: docker run iom996/uptimebot
+        run: docker run --env-file .env iom996/uptimebot
