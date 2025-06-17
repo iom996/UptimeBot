@@ -24,5 +24,5 @@ jobs:
           echo "token=${api_token}" > .env
           cat .env
 
-      - name: Run Docker container and show logs
+      - name: Run Docker container
         run: docker run --env-file .env iom996/uptimebot
