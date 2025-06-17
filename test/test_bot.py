@@ -1,13 +1,24 @@
-import os, sys, unittest
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'bot')))
-from main import Uptime_start
+import pytest
+from aiogram import Bot
+from aiogram.types import Message, User, Chat
+from main import dp  # Импорт твоего Dispatcher из main.py
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-class TestChecker(unittest.TestCase):
-    def test_valid_url(self):
-        self.assertTrue(get_web("https://google.com"))
+@pytest.mark.asyncio
+async def test_start_handler(monkeypatch):
+    sent_messages = []
 
-    def test_invalid_url(self):
-        self.assertFalse(get_web("http://thisurldoesnotexist1234.com"))
+    async def fake_answer(text, **kwargs):
+        sent_messages.append(text)
 
-if __name__ == "__main__":
-    unittest.main()
+    user = User(id=12345, is_bot=False, first_name="Tester")
+    chat = Chat(id=12345, type="private")
+    message = Message(message_id=1, from_user=user, chat=chat, text="/start", date=None)
+
+    monkeypatch.setattr(message, "answer", fake_answer)
+
+    await dp.feed_update(message)
+
+    assert any("Hello" in msg for msg in sent_messages)

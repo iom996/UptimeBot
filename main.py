@@ -1,4 +1,7 @@
-import asyncio, aiohttp, logging, dotenv
+import asyncio
+import aiohttp
+import logging
+import dotenv
 from os import getenv
 
 from aiogram import Bot, Dispatcher, F
@@ -7,7 +10,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
 
-# Настройка логов
+# Логирование в файл
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s — %(levelname)s — %(message)s",
@@ -17,38 +20,38 @@ logging.basicConfig(
 
 dotenv.load_dotenv()
 
-TOKEN = getenv("token")  # Убедись, что у тебя переменная окружения `token` задана
+TOKEN = getenv("token")
+if not TOKEN:
+    logging.error("BOT TOKEN is not set in environment variable 'token'")
+    exit(1)
 
-# FSM состояния
+# FSM состояния для диалога с пользователем
 class Form(StatesGroup):
-    web = State()
-    interval = State()
+    web = State()       # Ожидаем URL сайта
+    interval = State()  # Ожидаем интервал проверки
 
 dp = Dispatcher()
-monitoring_tasks = {}  # Словарь для отслеживания задач по user_id
+monitoring_tasks = {}  # Словарь user_id -> asyncio.Task
 
 
-# /start
 @dp.message(CommandStart())
 async def command_start_handler(message: Message) -> None:
-    logging.info(f"User {message.from_user.id} started a bot")
+    logging.info(f"User {message.from_user.id} started the bot")
     await message.answer(
         "👋 Hello! I’m Uptime — your personal website monitoring assistant.\n"
         "To start monitoring, send /uptime"
     )
 
 
-# /uptime — старт отслеживания
 @dp.message(Command("uptime"))
 async def command_uptime(message: Message, state: FSMContext) -> None:
     await state.set_state(Form.web)
     await message.answer(
         "🌍 Great! Now, please send the full URL of the website you want me to monitor "
-        "(e.g., `https://example.com`)."
+        "(e.g., https://example.com)."
     )
 
 
-# /cancel — остановка отслеживания
 @dp.message(Command("cancel"))
 async def cancel_uptime(message: Message, state: FSMContext) -> None:
     user_id = message.from_user.id
@@ -65,18 +68,16 @@ async def cancel_uptime(message: Message, state: FSMContext) -> None:
     await state.clear()
 
 
-# Получение URL
 @dp.message(Form.web)
 async def get_web(message: Message, state: FSMContext) -> None:
     await state.update_data(web=message.text)
     await state.set_state(Form.interval)
     await message.answer(
         "🕒 How often should I check the website?\n\n"
-        "Please enter the interval in minutes (e.g., `5`)."
+        "Please enter the interval in minutes (e.g., 5)."
     )
 
 
-# Получение интервала
 @dp.message(Form.interval)
 async def get_interval(message: Message, state: FSMContext) -> None:
     try:
@@ -86,7 +87,7 @@ async def get_interval(message: Message, state: FSMContext) -> None:
     except ValueError:
         await message.answer(
             "⚠️ That doesn't look like a valid number.\n"
-            "Please enter the interval in minutes, using digits only (e.g. `15`)."
+            "Please enter the interval in minutes, using digits only (e.g. 15)."
         )
         return
 
@@ -107,12 +108,10 @@ async def get_interval(message: Message, state: FSMContext) -> None:
         )
     )
 
-    # Стартуем отдельную задачу
     task = asyncio.create_task(start_monitoring(web, interval, message))
     monitoring_tasks[message.from_user.id] = task
 
 
-# Мониторинг
 async def start_monitoring(web: str, interval: int, message: Message):
     try:
         while True:
@@ -133,21 +132,19 @@ async def start_monitoring(web: str, interval: int, message: Message):
         return
 
 
-# Проверка сайта
 async def check_website(web: str) -> bool:
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get(web, timeout=5) as response:
                 return response.status == 200
-    except:
+    except Exception:
         return False
 
 
-# Старт бота
 async def main() -> None:
     bot = Bot(token=TOKEN)
     await dp.start_polling(bot)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     logging.info("Bot is starting...")
     asyncio.run(main())

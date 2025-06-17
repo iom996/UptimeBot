@@ -1,5 +1,5 @@
-redis
 asyncio
 aiogram
-requests
+aiohttp
 python-dotenv
+pytest
