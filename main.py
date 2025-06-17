@@ -127,8 +127,6 @@ async def start_monitoring(web: str, interval: int, message: Message):
 
             await asyncio.sleep(interval * 60)
     except asyncio.CancelledError:
-        logging.info(f"Monitoring for {web} was cancelled.")
-        await message.answer("🛑 Monitoring task has been stopped.")
         return
 
 
