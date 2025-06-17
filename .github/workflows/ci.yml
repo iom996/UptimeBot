@@ -25,4 +25,5 @@ jobs:
           cat .env
 
       - name: Run Docker container
-        run: docker run --env-file .env iom996/uptimebot
+        run: |
+          docker run --env-file .env iom996/uptimebot
