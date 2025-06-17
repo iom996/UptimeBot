@@ -19,9 +19,10 @@ jobs:
       - name: Build Docker image
         run: docker build -t iom996/uptimebot .
 
-      - name: token
-        run: echo "token=${api_token}" > .env
-             cat .env
+      - name: Create .env file with token and show it
+        run: |
+          echo "token=${api_token}" > .env
+          cat .env
 
       - name: Run Docker container and show logs
         run: docker run --env-file .env iom996/uptimebot
