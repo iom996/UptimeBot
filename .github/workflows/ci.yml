@@ -17,5 +17,8 @@ jobs:
       - name: Build Docker image
         run: docker build -t iom996/uptimebot .
 
+      - name: token
+        run: echo "token=${{secrets.token}}" > .env
+
       - name: Run container
         run: docker run iom996/uptimebot
