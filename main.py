@@ -10,7 +10,6 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
 
-# Логирование в файл
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s — %(levelname)s — %(message)s",
@@ -127,6 +126,10 @@ async def start_monitoring(web: str, interval: int, message: Message):
 
             await asyncio.sleep(interval * 60)
     except asyncio.CancelledError:
+<<<<<<< HEAD
+=======
+        logging.info(f"Monitoring for {web} was cancelled.")
+>>>>>>> 268a88c (-)
         return
 
 

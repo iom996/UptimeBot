@@ -1,0 +1,11 @@
+2025-06-23 19:28:48,220 — INFO — Bot is starting...
+2025-06-23 19:28:48,248 — INFO — Start polling
+2025-06-23 19:28:48,323 — INFO — Run polling for bot @Uptime_iomBot id=8042936147 - 'Uptimr'
+2025-06-23 19:29:09,030 — INFO — Update id=274046175 is handled. Duration 109 ms by bot id=8042936147
+2025-06-23 19:29:13,590 — INFO — Update id=274046176 is handled. Duration 40 ms by bot id=8042936147
+2025-06-23 19:29:16,206 — INFO — Update id=274046177 is handled. Duration 71 ms by bot id=8042936147
+2025-06-23 19:29:40,378 — INFO — Monitoring for https://example.com was cancelled.
+2025-06-23 19:29:40,424 — INFO — Update id=274046178 is handled. Duration 46 ms by bot id=8042936147
+2025-06-23 19:29:49,664 — WARNING — Received SIGINT signal
+2025-06-23 19:29:49,664 — INFO — Polling stopped for bot @Uptime_iomBot id=8042936147 - 'Uptimr'
+2025-06-23 19:29:49,664 — INFO — Polling stopped
