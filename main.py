@@ -126,10 +126,7 @@ async def start_monitoring(web: str, interval: int, message: Message):
 
             await asyncio.sleep(interval * 60)
     except asyncio.CancelledError:
-<<<<<<< HEAD
-=======
         logging.info(f"Monitoring for {web} was cancelled.")
->>>>>>> 268a88c (-)
         return
 
 
